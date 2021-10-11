@@ -9,8 +9,17 @@ import UIKit
 
 protocol FollowerListViewDelegate: AnyObject {
     func configureSearchController()
-    func getFollowers(username: String, page: Int)
     func present(with username: String)
+    func load()
+}
+
+protocol FollowerListRootView: UIView {
+    var delegate: FollowerListViewDelegate? { get set }
+    
+    func updateData(on followers: [Follower])
+    func setFilteredState(with query: String)
+    func setUnfilteredState()
+    func updateUI(with followers: [Follower])
 }
 
 class FollowerListView: UIView {
@@ -20,6 +29,7 @@ class FollowerListView: UIView {
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: frame, collectionViewLayout: UIHelper.createThreeColumnFlowLayout(in: self))
         collectionView.delegate = self
+        collectionView.prefetchDataSource = self
         collectionView.backgroundColor = .systemBackground
         collectionView.register(FollowerCell.self, forCellWithReuseIdentifier: FollowerCell.reuseID)
         
@@ -31,9 +41,6 @@ class FollowerListView: UIView {
     private var isSearching                     = false
     private var followers: [Follower]           = []
     private var filteredFollowers: [Follower]   = []
-//    var page                            = 1
-//    var hasMoreFollowers                = true
-//    var isLoadingMoreFollowers          = false
 
     private var dataSource: UICollectionViewDiffableDataSource<Section, Follower>?
     
@@ -64,19 +71,11 @@ class FollowerListView: UIView {
         ])
 
         configureDataSource()
+        snapshot.appendSections([.main])
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    private func updateData(on followers: [Follower]) {
-        snapshot.appendSections([.main])
-        snapshot.appendItems(followers)
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
-            self.dataSource?.apply(self.snapshot, animatingDifferences: true)
-        }
     }
 }
 
@@ -97,35 +96,35 @@ extension FollowerListView: FollowerListRootView {
         self.followers.append(contentsOf: followers)
         updateData(on: followers)
     }
+    
+    func updateData(on followers: [Follower]) {
+        snapshot.appendItems(followers)
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            self.dataSource?.apply(self.snapshot, animatingDifferences: true)
+        }
+    }
 }
 
 
 extension FollowerListView: UICollectionViewDelegate {
-    
-//    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-//        let offsetY             = scrollView.contentOffset.y
-//        let contentHeight       = scrollView.contentSize.height
-//        let height              = scrollView.frame.size.height
-//        
-//        if offsetY > contentHeight - height {
-//            guard hasMoreFollowers, !isLoadingMoreFollowers else { return }
-//            page += 1
-//            guard let username = username else { return }
-//            delegate?.getFollowers(username: username, page: page)
-//        }
-//    }
-    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let activeArray     = isSearching ? filteredFollowers : followers
-        let follower        = activeArray[indexPath.item]            
+        let follower        = activeArray[indexPath.item]
         delegate?.present(with: follower.login)
     }
 }
 
-protocol FollowerListRootView: UIView {
-    var delegate: FollowerListViewDelegate? { get set }
+extension FollowerListView: UICollectionViewDataSourcePrefetching {
+    func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
+        guard indexPaths.contains(where: isLastElement) else {
+            return
+        }
+        
+        delegate?.load()
+    }
     
-    func setFilteredState(with query: String)
-    func setUnfilteredState()
-    func updateUI(with followers: [Follower])
+    private func isLastElement(indexPath: IndexPath) -> Bool {
+        snapshot.numberOfItems(inSection: .main) == indexPath.row + 1
+    }
 }

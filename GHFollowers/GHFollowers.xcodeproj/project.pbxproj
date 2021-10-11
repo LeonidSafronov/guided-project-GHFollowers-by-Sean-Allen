@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9C76E57F270DF8FB007ACAD7 /* FollowerViewCellData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C76E57E270DF8FB007ACAD7 /* FollowerViewCellData.swift */; };
+		9C76E588270EFAD4007ACAD7 /* SwipeCellKit in Frameworks */ = {isa = PBXBuildFile; productRef = 9C76E587270EFAD4007ACAD7 /* SwipeCellKit */; };
+		9C76E58A270F1453007ACAD7 /* Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C76E589270F1453007ACAD7 /* Shared.swift */; };
 		B33A49C926C37B200000A283 /* GFTitleLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33A49C826C37B200000A283 /* GFTitleLabel.swift */; };
 		B33A49CB26C37E510000A283 /* GFBodyLAbel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33A49CA26C37E510000A283 /* GFBodyLAbel.swift */; };
 		B33A49CD26C37F780000A283 /* GFAlertVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33A49CC26C37F780000A283 /* GFAlertVC.swift */; };
@@ -53,6 +56,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		9C76E57E270DF8FB007ACAD7 /* FollowerViewCellData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowerViewCellData.swift; sourceTree = "<group>"; };
+		9C76E589270F1453007ACAD7 /* Shared.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared.swift; sourceTree = "<group>"; };
 		B33A49C826C37B200000A283 /* GFTitleLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GFTitleLabel.swift; sourceTree = "<group>"; };
 		B33A49CA26C37E510000A283 /* GFBodyLAbel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GFBodyLAbel.swift; sourceTree = "<group>"; };
 		B33A49CC26C37F780000A283 /* GFAlertVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GFAlertVC.swift; sourceTree = "<group>"; };
@@ -104,6 +109,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9C76E588270EFAD4007ACAD7 /* SwipeCellKit in Frameworks */,
 				B3CEF23D270DA7C800519F8F /* IQKeyboardManagerSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -184,6 +190,7 @@
 				B36728F026D2C69E00210EEF /* UIHelper.swift */,
 				B3ED9DDE26D81F5E00AF2AB1 /* GFError.swift */,
 				B3DF43CC26EE040D0055BB2C /* Constants.swift */,
+				9C76E589270F1453007ACAD7 /* Shared.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -324,6 +331,7 @@
 			children = (
 				B3E583F826C22F24003CC1B5 /* FollowerListVC.swift */,
 				B3D84B9C2707031200020035 /* FollowerListView.swift */,
+				9C76E57E270DF8FB007ACAD7 /* FollowerViewCellData.swift */,
 			);
 			path = Follower;
 			sourceTree = "<group>";
@@ -355,6 +363,7 @@
 			name = GHFollowers;
 			packageProductDependencies = (
 				B3CEF23C270DA7C800519F8F /* IQKeyboardManagerSwift */,
+				9C76E587270EFAD4007ACAD7 /* SwipeCellKit */,
 			);
 			productName = GHFollowers;
 			productReference = B3C50C7626BCE4CD00E5B6BB /* GHFollowers.app */;
@@ -385,6 +394,7 @@
 			mainGroup = B3C50C6D26BCE4CD00E5B6BB;
 			packageReferences = (
 				B3CEF23B270DA7C800519F8F /* XCRemoteSwiftPackageReference "IQKeyboardManager" */,
+				9C76E586270EFAD4007ACAD7 /* XCRemoteSwiftPackageReference "SwipeCellKit" */,
 			);
 			productRefGroup = B3C50C7726BCE4CD00E5B6BB /* Products */;
 			projectDirPath = "";
@@ -412,6 +422,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9C76E58A270F1453007ACAD7 /* Shared.swift in Sources */,
 				B33A49D826CB690A0000A283 /* User.swift in Sources */,
 				B3C50C9626C0459A00E5B6BB /* GFTextField.swift in Sources */,
 				B33A49CB26C37E510000A283 /* GFBodyLAbel.swift in Sources */,
@@ -451,6 +462,7 @@
 				B3C50C7C26BCE4CD00E5B6BB /* SceneDelegate.swift in Sources */,
 				B3D84B912705E49400020035 /* UIView+Ext.swift in Sources */,
 				B3D84B7D270480CE00020035 /* GFRepoItemVC.swift in Sources */,
+				9C76E57F270DF8FB007ACAD7 /* FollowerViewCellData.swift in Sources */,
 				B3ED9DDD26D7404A00AF2AB1 /* UserInfoVC.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -647,6 +659,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		9C76E586270EFAD4007ACAD7 /* XCRemoteSwiftPackageReference "SwipeCellKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SwipeCellKit/SwipeCellKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.7.1;
+			};
+		};
 		B3CEF23B270DA7C800519F8F /* XCRemoteSwiftPackageReference "IQKeyboardManager" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/hackiftekhar/IQKeyboardManager.git";
@@ -658,6 +678,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		9C76E587270EFAD4007ACAD7 /* SwipeCellKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9C76E586270EFAD4007ACAD7 /* XCRemoteSwiftPackageReference "SwipeCellKit" */;
+			productName = SwipeCellKit;
+		};
 		B3CEF23C270DA7C800519F8F /* IQKeyboardManagerSwift */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B3CEF23B270DA7C800519F8F /* XCRemoteSwiftPackageReference "IQKeyboardManager" */;

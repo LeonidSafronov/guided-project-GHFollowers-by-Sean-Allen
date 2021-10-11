@@ -10,8 +10,14 @@ import UIKit
 class FollowerListVC: GFDataLoadingVC {
     
     private var hasMoreFollowers = true
+    private var page                            = 1
+    
+    private var username: String {
+        title ?? .init()
+    }
     
     private lazy var rootView: FollowerListRootView = FollowerListView()
+    
     
     override func loadView() {
         view = rootView
@@ -21,7 +27,7 @@ class FollowerListVC: GFDataLoadingVC {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        getFollowers(username: title ?? .init(), page: 0)
+        getFollowers(username: username)
 
         customizeNavBar()
         configureSearchController()
@@ -71,9 +77,6 @@ class FollowerListVC: GFDataLoadingVC {
         fatalError("init(coder:) has not been implemented")
     }
     
-// MARK: - viewWillAppear "Loading next 100 followers after delay."
-// TODO: add functional of smooth followers loading
-    
     
     func addUserToFavorites(user: User) {
         let favorite = Follower(login: user.login, avatarUrl: user.avatarUrl)
@@ -98,7 +101,6 @@ extension FollowerListVC: UISearchResultsUpdating {
             rootView.setUnfilteredState()
             return
         }
-        
         rootView.setFilteredState(with: filter)
     }
 }
@@ -108,7 +110,7 @@ extension FollowerListVC: FollowerListViewDelegate {
     
     func present(with username: String) {
         let destVC          = UserInfoVC(userName: username)
-        destVC.delegate     = self
+//        destVC.delegate     = self
         let navController   = UINavigationController(rootViewController: destVC)
         present(navController, animated: true)
     }
@@ -121,47 +123,41 @@ extension FollowerListVC: FollowerListViewDelegate {
         navigationItem.searchController                         = searchController
     }
 
+    
     func showEmptyView() {
         let message = "This user doesn't have any followers. Go follow them 😀."
         DispatchQueue.main.async { self.showEmptyStateView(with: message, in: self.rootView) }
     }
     
-    func getFollowers(username: String, page: Int) {
+    private func getFollowers(username: String) {
         showLoadingView()
-        
-//        rootView.isLoadingMoreFollowers = true
+
         NetworkManager.shared.getFollowers(for: username, page: page) { [weak self] result in
             guard let self = self else { return }
             self.dismissLoadingView()
             
             switch result {
-            case .success(let followers):
-                if followers.count < 100 {
-                    self.hasMoreFollowers = false
-                    self.showEmptyView()
-                } else {
-                    self.rootView.updateUI(with: followers)
-                }
+            case .success(let data):
+                self.hasMoreFollowers = data.count >= 100
+                self.rootView.updateUI(with: data)
             case .failure(let error):
                 self.presentGFAlertOnMainThread(title: "Bad Stuff Happened", message: error.rawValue, buttonTitle: "Ok")
             }
-            
-//            self.rootView.isLoadingMoreFollowers = false
         }
+    }
+    
+    func load() {
+        guard hasMoreFollowers else {
+            return
+        }
+
+        page += 1
+        getFollowers(username: username)
     }
 }
 
-extension FollowerListVC: UserInfoVCDelegate {
-    
-    func didRequestFollowers(for username: String) {
-//        rootView.username        = username
-//        title                    = username
-//        rootView.page            = 1
-//
-//        rootView.followers.removeAll()
-//        rootView.filteredFollowers.removeAll()
-//        rootView.collectionView.scrollToItem(at: IndexPath(item: 0, section: 0), at: .top, animated: true)
-//
-//        getFollowers(username: username, page: rootView.page)
-    }
-}
+// Написать в контроллере метод, который модели Followers делает FollowerViewCellData
+
+// передать во вью FollowerViewCellData и пофиксить все ошибки :)
+
+

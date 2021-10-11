@@ -6,17 +6,21 @@
 //
 
 import UIKit
+import SwipeCellKit
 
-class FavoritesListVC: GFDataLoadingVC {
+class FavoritesListVC: GFDataLoadingVC, UITableViewDelegate {
     
 //    private lazy var rootView 
     
     let tableView               = UITableView()
     var favorites: [Follower]   = []
+    var defaultOptions = SwipeOptions()
+    var isSwipeRightEnabled = true
+    var buttonDisplayMode: ButtonDisplayMode = .titleAndImage
+    var buttonStyle: ButtonStyle = .backgroundColor
     
-
     override func loadView() {
-        
+        super.loadView()
     }
     
     
@@ -24,6 +28,7 @@ class FavoritesListVC: GFDataLoadingVC {
         super.viewDidLoad()
         configureViewController()
         configureTableView()
+        
     }
     
     
@@ -50,6 +55,8 @@ class FavoritesListVC: GFDataLoadingVC {
         tableView.removeExcessCells()
         
         tableView.register(FavoriteCell.self, forCellReuseIdentifier: FavoriteCell.reuseID)
+        tableView.allowsSelection                       = true
+        
     }
     
     
@@ -82,7 +89,42 @@ class FavoritesListVC: GFDataLoadingVC {
 }
 
 
-extension FavoritesListVC: UITableViewDataSource, UITableViewDelegate {
+extension FavoritesListVC: UITableViewDataSource, SwipeTableViewCellDelegate {
+
+    
+    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
+        guard orientation == .right else { return nil }
+
+        let deleteAction = SwipeAction(style: .destructive, title: "Delete") { action, indexPath in
+            PersistenceManager.updateWith(favorite: self.favorites[indexPath.row], actionType: .remove) { [weak self] error in
+                guard let self = self else { return }
+                guard let error = error else {
+                    self.favorites.remove(at: indexPath.row)
+                    tableView.deleteRows(at: [indexPath], with: .left)
+                    return
+                }
+                
+                self.presentGFAlertOnMainThread(title: "Unable to remove", message: error.rawValue, buttonTitle: "Ok")
+            }
+        }
+        // customize the action appearance
+        deleteAction.image = UIImage(named: "delete")
+
+        return [deleteAction]
+    }
+    
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
+    
+    func tableView(_ tableView: UITableView, editActionsOptionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> SwipeOptions {
+        var options = SwipeOptions()
+        options.expansionStyle = .none
+        options.transitionStyle = .border
+        return options
+    }
+
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return favorites.count
@@ -91,6 +133,7 @@ extension FavoritesListVC: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: FavoriteCell.reuseID) as! FavoriteCell
         let favorite = favorites[indexPath.row]
+        cell.delegate = self
         cell.set(favorite: favorite)
         return cell
     }
@@ -101,24 +144,5 @@ extension FavoritesListVC: UITableViewDataSource, UITableViewDelegate {
         let destVC      = FollowerListVC(username: favorite.login)
         
         navigationController?.pushViewController(destVC, animated: true)
-    }
-    
-    
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        guard editingStyle == .delete else { return }
-        
-// MARK: - "Swipe deleting of favorites"
-// TODO: Add library for swiping functionality
-        
-        PersistenceManager.updateWith(favorite: favorites[indexPath.row], actionType: .remove) { [weak self] error in
-            guard let self = self else { return }
-            guard let error = error else {
-                self.favorites.remove(at: indexPath.row)
-                tableView.deleteRows(at: [indexPath], with: .left)
-                return
-            }
-            
-            self.presentGFAlertOnMainThread(title: "Unable to remove", message: error.rawValue, buttonTitle: "Ok")
-        }
-    }
+    }  
 }

@@ -6,8 +6,10 @@
 //
 
 import UIKit
+import SwipeCellKit
 
-class FavoriteCell: UITableViewCell {
+//class FavoriteCell: UITableViewCell {
+class FavoriteCell: SwipeTableViewCell {
 
     static let reuseID  = "FavoriteCell"
     let avatarImageView = GFAvatarImageView(frame: .zero)

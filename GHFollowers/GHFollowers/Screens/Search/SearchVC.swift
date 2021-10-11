@@ -11,9 +11,12 @@ class SearchVC: UIViewController {
     
     private lazy var rootView = SearchView()
     
+
     override func loadView() {
         view = rootView
         rootView.delegate = self
+        let tap = UITapGestureRecognizer(target: view, action: #selector(UIView.endEditing))
+        view.addGestureRecognizer(tap)
     }
     
     
@@ -30,6 +33,7 @@ extension SearchVC: SearchViewDelegate {
         let followerListVC = FollowerListVC(username: name)
         navigationController?.pushViewController(followerListVC, animated: true)
     }
+    
     
     func showError() {
         presentGFAlertOnMainThread(title: "Empty Username", message: "Please enter a username. We need to know who to look for 😀.", buttonTitle: "Ok")
